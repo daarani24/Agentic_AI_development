@@ -32,5 +32,32 @@ def get_database_schema():
     connection.close()
     return schema
 
+def execute_sql(query):
+    connection=sqlite3.connect(DATABASE)
+    cursor=connection.cursor()
+
+    try:
+        cursor.execute(query)
+        results=cursor.fetchall()
+        connection.close()
+        return{
+            "success":True,
+            "results":results
+        }
+    
+    except sqlite3.Error as error:
+        connection.close()
+        return{
+            "success":False,
+            "error":str(error)
+        }
+
 if __name__=="__main__":
+    print("Database schema:")
     print(get_database_schema())
+
+    print("\nValid SQL:")
+    print(execute_sql("SELECT * FROM students"))
+
+    print("\nInvalid SQL:")
+    print(execute_sql("SELECT * FROM students WHERE score > 80"))
